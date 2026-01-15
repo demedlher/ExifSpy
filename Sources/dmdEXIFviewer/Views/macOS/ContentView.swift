@@ -12,6 +12,7 @@ struct ContentView: View {
     @State private var isLoading: Bool = false
     @State private var isTargeted: Bool = false
     @State private var showZoomOverlay: Bool = false
+    @State private var gpsCoordinates: GPSCoordinates? = nil
 
     var body: some View {
         ZStack {
@@ -80,7 +81,8 @@ struct ContentView: View {
                 sections: exifSections,
                 isLoading: isLoading,
                 errorMessage: errorMessage,
-                hasFileStats: fileStats != nil
+                hasFileStats: fileStats != nil,
+                gpsCoordinates: gpsCoordinates
             )
             .frame(minWidth: 300)
         }
@@ -96,6 +98,7 @@ struct ContentView: View {
         errorMessage = nil
         isLoading = false
         showZoomOverlay = false
+        gpsCoordinates = nil
     }
 
     private func handleDrop(providers: [NSItemProvider]) {
@@ -179,6 +182,7 @@ struct ContentView: View {
                 self.fileStats = result.fileStats
                 self.exifSections = result.sections
                 self.errorMessage = result.errorMessage
+                self.gpsCoordinates = result.gpsCoordinates
                 self.isLoading = false
             }
         }

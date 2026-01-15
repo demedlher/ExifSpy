@@ -6,12 +6,28 @@ import UniformTypeIdentifiers
 import AppKit
 #endif
 
+/// GPS coordinates extracted from image
+struct GPSCoordinates {
+    let latitude: Double
+    let longitude: Double
+
+    var appleMapsURL: URL? {
+        // Use maps.apple.com with both ll (center) and q (pin) parameters
+        URL(string: "https://maps.apple.com/?ll=\(latitude),\(longitude)&q=\(latitude),\(longitude)")
+    }
+
+    var googleMapsURL: URL? {
+        URL(string: "https://www.google.com/maps?q=\(latitude),\(longitude)")
+    }
+}
+
 /// Result of metadata extraction
 struct MetadataResult {
     let fileStats: FileStats
     let sections: [ExifSectionData]
     let previewImage: NSImage?
     let errorMessage: String?
+    let gpsCoordinates: GPSCoordinates?
 }
 
 /// Service for extracting EXIF and image metadata
@@ -54,7 +70,8 @@ class MetadataExtractor {
                 fileStats: fileStats,
                 sections: [],
                 previewImage: previewImage,
-                errorMessage: "Could not create image source."
+                errorMessage: "Could not create image source.",
+                gpsCoordinates: nil
             )
         }
 
@@ -65,7 +82,8 @@ class MetadataExtractor {
                 fileStats: fileStats,
                 sections: [],
                 previewImage: previewImage,
-                errorMessage: "Could not get image properties."
+                errorMessage: "Could not get image properties.",
+                gpsCoordinates: nil
             )
         }
 
@@ -138,11 +156,15 @@ class MetadataExtractor {
             }
         }
 
+        // Extract GPS coordinates
+        let gpsCoordinates = extractGPSCoordinates(from: imageProperties)
+
         return MetadataResult(
             fileStats: fileStats,
             sections: sections.filter { !$0.entries.isEmpty },
             previewImage: previewImage,
-            errorMessage: errorMessage
+            errorMessage: errorMessage,
+            gpsCoordinates: gpsCoordinates
         )
     }
 
@@ -171,6 +193,25 @@ class MetadataExtractor {
                 pixelHeight: pixelHeight
             )
         }
+    }
+
+    private func extractGPSCoordinates(from imageProperties: [CFString: Any]) -> GPSCoordinates? {
+        guard let gpsDict = imageProperties[kCGImagePropertyGPSDictionary] as? [CFString: Any] else {
+            return nil
+        }
+
+        guard let latitude = gpsDict[kCGImagePropertyGPSLatitude] as? Double,
+              let latitudeRef = gpsDict[kCGImagePropertyGPSLatitudeRef] as? String,
+              let longitude = gpsDict[kCGImagePropertyGPSLongitude] as? Double,
+              let longitudeRef = gpsDict[kCGImagePropertyGPSLongitudeRef] as? String else {
+            return nil
+        }
+
+        // Convert to signed coordinates (N/E positive, S/W negative)
+        let signedLatitude = latitudeRef == "S" ? -latitude : latitude
+        let signedLongitude = longitudeRef == "W" ? -longitude : longitude
+
+        return GPSCoordinates(latitude: signedLatitude, longitude: signedLongitude)
     }
 
     // MARK: - Value Formatting

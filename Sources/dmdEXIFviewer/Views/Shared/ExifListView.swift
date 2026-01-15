@@ -1,11 +1,16 @@
 import SwiftUI
 
+#if canImport(AppKit)
+import AppKit
+#endif
+
 /// Displays EXIF metadata sections in a scrollable list
 struct ExifListView: View {
     let sections: [ExifSectionData]
     let isLoading: Bool
     let errorMessage: String?
     let hasFileStats: Bool
+    let gpsCoordinates: GPSCoordinates?
 
     var body: some View {
         Group {
@@ -39,6 +44,10 @@ struct ExifListView: View {
                             ForEach(section.entries) { entry in
                                 ExifEntryRow(entry: entry)
                             }
+                            // Show map buttons in GPS Data section
+                            if section.title == "GPS Data", let coords = gpsCoordinates {
+                                MapButtonsRow(coordinates: coords)
+                            }
                         } header: {
                             SectionHeaderView(title: section.title)
                         }
@@ -46,6 +55,44 @@ struct ExifListView: View {
                 }
                 .listStyle(.plain)
             }
+        }
+    }
+}
+
+/// Row with buttons to open location in maps
+struct MapButtonsRow: View {
+    let coordinates: GPSCoordinates
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Button(action: openAppleMaps) {
+                Label("Apple Maps", systemImage: "map")
+            }
+            .buttonStyle(.bordered)
+
+            Button(action: openGoogleMaps) {
+                Label("Google Maps", systemImage: "globe")
+            }
+            .buttonStyle(.bordered)
+
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+
+    private func openAppleMaps() {
+        if let url = coordinates.appleMapsURL {
+            #if canImport(AppKit)
+            NSWorkspace.shared.open(url)
+            #endif
+        }
+    }
+
+    private func openGoogleMaps() {
+        if let url = coordinates.googleMapsURL {
+            #if canImport(AppKit)
+            NSWorkspace.shared.open(url)
+            #endif
         }
     }
 }
