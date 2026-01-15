@@ -34,7 +34,7 @@ Download the latest `.dmg` from the Releases page, open it, and drag the app to 
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dmd-EXIF-viewer.git
+git clone https://github.com/demedlher/dmd-EXIF-viewer.git
 cd dmd-EXIF-viewer
 
 # Build and run (debug)
