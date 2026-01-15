@@ -9,6 +9,7 @@ A native macOS application for viewing EXIF metadata and image properties. Simpl
 - **Image preview** - Displays a scaled preview alongside metadata
 - **File statistics** - Shows file name, path, size, dimensions, and aspect ratio
 - **Smart formatting** - GPS coordinates, lens specs, and complex data types are human-readable
+- **"Where was this photo taken?"** - One-click buttons to open GPS coordinates in Apple Maps or Google Maps
 - **Native macOS app** - Full dock presence, proper menu handling, SwiftUI interface
 
 ## Screenshots
@@ -53,7 +54,7 @@ swift build
    - **Image Properties** - Dimensions, DPI, color model, bit depth
    - **EXIF Details** - Camera settings, exposure, ISO, date taken
    - **TIFF Properties** - Make, model, software
-   - **GPS Data** - Latitude, longitude, altitude
+   - **GPS Data** - Latitude, longitude, altitude (with buttons to view location in Apple Maps or Google Maps)
    - **IPTC Information** - Copyright, captions, keywords
    - **PNG/JFIF Properties** - Format-specific metadata
 
