@@ -12,13 +12,11 @@ A native macOS application for viewing EXIF metadata and image properties. Simpl
 - **"Where was this photo taken?"** - One-click buttons to open GPS coordinates in Apple Maps or Google Maps
 - **Native macOS app** - Full dock presence, proper menu handling, SwiftUI interface
 
-## Screenshots
+## Screenshot
 
-| Drop Zone | Metadata View |
-|-----------|---------------|
-| ![Drop Zone](screenshots/drop-zone.png) | ![Metadata View](screenshots/metadata-view.png) |
+![Metadata View](screenshots/metadata-view.png)
 
-*Left: Initial drop zone interface. Right: Split-pane view showing image preview and extracted EXIF metadata.*
+*Split-pane view showing image preview and extracted EXIF metadata with GPS location buttons.*
 
 ## Requirements
 
