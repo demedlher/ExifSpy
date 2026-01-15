@@ -50,7 +50,7 @@ struct KeyEventHandler: NSViewRepresentable {
     }
 }
 
-/// Custom NSView that captures key events
+/// Custom NSView that captures key events but allows mouse clicks through
 class KeyCaptureView: NSView {
     var onKeyPress: ((UInt16) -> Bool)?
 
@@ -66,5 +66,10 @@ class KeyCaptureView: NSView {
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
         window?.makeFirstResponder(self)
+    }
+
+    // Allow mouse events to pass through to views below
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        return nil
     }
 }
