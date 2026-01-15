@@ -1,0 +1,27 @@
+# Build artifacts
+.build/
+Build/
+DerivedData/
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+*.xcuserdatad
+
+# Swift Package Manager
+.swiftpm/
+Package.resolved
+
+# macOS
+.DS_Store
+*.dSYM
+
+# Generated DMG
+*.dmg
+
+# Screenshots (optional - remove if you want to track them)
+# screenshots/
+
+# Test images
+test-images/
