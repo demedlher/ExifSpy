@@ -36,8 +36,8 @@ struct dmdEXIFviewerApp: App {
         WindowGroup {
             ContentView()
         }
-        .windowStyle(.hiddenTitleBar)
-        .windowToolbarStyle(.unifiedCompact)
+        .windowStyle(.titleBar)
+        .windowToolbarStyle(.unified)
         .commands {
             CommandGroup(replacing: .newItem) {}
             CommandGroup(replacing: .saveItem) {}
