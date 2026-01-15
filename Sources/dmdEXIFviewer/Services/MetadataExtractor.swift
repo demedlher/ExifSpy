@@ -19,6 +19,55 @@ struct GPSCoordinates {
     var googleMapsURL: URL? {
         URL(string: "https://www.google.com/maps?q=\(latitude),\(longitude)")
     }
+
+    // MARK: - Coordinate Format Strings
+
+    /// Decimal degrees format: "37.774900, -122.419400"
+    var decimalString: String {
+        String(format: "%.6f, %.6f", latitude, longitude)
+    }
+
+    /// Degrees, Minutes, Seconds format: "37° 46' 29.64" N, 122° 25' 9.84" W"
+    var dmsString: String {
+        "\(formatDMS(latitude, isLatitude: true)), \(formatDMS(longitude, isLatitude: false))"
+    }
+
+    /// Degrees and Decimal Minutes format: "37° 46.494' N, 122° 25.164' W"
+    var ddmString: String {
+        "\(formatDDM(latitude, isLatitude: true)), \(formatDDM(longitude, isLatitude: false))"
+    }
+
+    private func formatDMS(_ value: Double, isLatitude: Bool) -> String {
+        let absolute = abs(value)
+        let degrees = Int(absolute)
+        let minutesDecimal = (absolute - Double(degrees)) * 60
+        let minutes = Int(minutesDecimal)
+        let seconds = (minutesDecimal - Double(minutes)) * 60
+
+        let direction: String
+        if isLatitude {
+            direction = value >= 0 ? "N" : "S"
+        } else {
+            direction = value >= 0 ? "E" : "W"
+        }
+
+        return String(format: "%d° %d' %.2f\" %@", degrees, minutes, seconds, direction)
+    }
+
+    private func formatDDM(_ value: Double, isLatitude: Bool) -> String {
+        let absolute = abs(value)
+        let degrees = Int(absolute)
+        let minutes = (absolute - Double(degrees)) * 60
+
+        let direction: String
+        if isLatitude {
+            direction = value >= 0 ? "N" : "S"
+        } else {
+            direction = value >= 0 ? "E" : "W"
+        }
+
+        return String(format: "%d° %.3f' %@", degrees, minutes, direction)
+    }
 }
 
 /// Result of metadata extraction

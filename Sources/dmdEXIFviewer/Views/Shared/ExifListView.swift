@@ -59,23 +59,40 @@ struct ExifListView: View {
     }
 }
 
-/// Row with buttons to open location in maps
+/// Row with buttons to open location in maps and copy coordinates
 struct MapButtonsRow: View {
     let coordinates: GPSCoordinates
+    @State private var copiedFormat: String? = nil
 
     var body: some View {
-        HStack(spacing: 12) {
-            Button(action: openAppleMaps) {
-                Label("Apple Maps", systemImage: "map")
-            }
-            .buttonStyle(.bordered)
+        VStack(alignment: .leading, spacing: 8) {
+            // Map buttons row
+            HStack(spacing: 12) {
+                Button(action: openAppleMaps) {
+                    Label("Apple Maps", systemImage: "map")
+                }
+                .buttonStyle(.bordered)
 
-            Button(action: openGoogleMaps) {
-                Label("Google Maps", systemImage: "globe")
-            }
-            .buttonStyle(.bordered)
+                Button(action: openGoogleMaps) {
+                    Label("Google Maps", systemImage: "globe")
+                }
+                .buttonStyle(.bordered)
 
-            Spacer()
+                Spacer()
+            }
+
+            // Copy buttons row
+            HStack(spacing: 8) {
+                Text("Copy:")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                CopyButton(label: "Decimal", value: coordinates.decimalString, copiedFormat: $copiedFormat)
+                CopyButton(label: "DMS", value: coordinates.dmsString, copiedFormat: $copiedFormat)
+                CopyButton(label: "DDM", value: coordinates.ddmString, copiedFormat: $copiedFormat)
+
+                Spacer()
+            }
         }
         .padding(.vertical, 4)
     }
@@ -94,6 +111,47 @@ struct MapButtonsRow: View {
             NSWorkspace.shared.open(url)
             #endif
         }
+    }
+}
+
+/// Small button to copy a coordinate format to clipboard
+struct CopyButton: View {
+    let label: String
+    let value: String
+    @Binding var copiedFormat: String?
+
+    private var isCopied: Bool {
+        copiedFormat == label
+    }
+
+    var body: some View {
+        Button(action: copyToClipboard) {
+            HStack(spacing: 4) {
+                Image(systemName: isCopied ? "checkmark" : "doc.on.doc")
+                    .font(.caption2)
+                Text(label)
+                    .font(.caption)
+            }
+            .foregroundColor(isCopied ? .green : .accentColor)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+    }
+
+    private func copyToClipboard() {
+        #if canImport(AppKit)
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(value, forType: .string)
+
+        // Show checkmark briefly
+        copiedFormat = label
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            if copiedFormat == label {
+                copiedFormat = nil
+            }
+        }
+        #endif
     }
 }
 
