@@ -2,21 +2,22 @@
 import PackageDescription
 
 let package = Package(
-    name: "dmdEXIFviewer",
+    name: "ExifSpy",
     platforms: [
         .macOS(.v11) // Targeting macOS 11.0 or later
     ],
     products: [
         .executable(
-            name: "dmdEXIFviewer",
-            targets: ["dmdEXIFviewer"]
+            name: "ExifSpy",
+            targets: ["ExifSpy"]
         )
     ],
     dependencies: [],
     targets: [
         .executableTarget(
-            name: "dmdEXIFviewer",
+            name: "ExifSpy",
             dependencies: [],
+            path: "Sources/ExifSpy",
             resources: [
                 .process("Resources"),
                 .process("Assets.xcassets")

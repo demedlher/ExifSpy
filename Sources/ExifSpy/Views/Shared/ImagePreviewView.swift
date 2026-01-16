@@ -11,17 +11,18 @@ struct ImagePreviewView: View {
     let onImageTap: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Image preview
-            imagePreview
-                .frame(maxHeight: .infinity)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                // Image preview
+                imagePreview
 
-            // File information
-            if let stats = fileStats {
-                fileInfoSection(stats: stats)
+                // File information
+                if let stats = fileStats {
+                    fileInfoSection(stats: stats)
+                }
             }
+            .padding()
         }
-        .padding()
     }
 
     @ViewBuilder

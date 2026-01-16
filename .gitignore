@@ -25,3 +25,6 @@ Package.resolved
 
 # Test images
 test-images/
+
+# Source images for icon generation
+images/

@@ -49,7 +49,14 @@ struct ExifListView: View {
                                 MapButtonsRow(coordinates: coords)
                             }
                         } header: {
-                            SectionHeaderView(title: section.title)
+                            SectionHeaderView(title: section.title, entries: section.entries)
+                        }
+                    }
+
+                    // Copy All Metadata button
+                    if !sections.isEmpty {
+                        Section {
+                            CopyAllButton(sections: sections)
                         }
                     }
                 }
@@ -158,6 +165,7 @@ struct CopyButton: View {
 /// Styled section header with dark background
 struct SectionHeaderView: View {
     let title: String
+    let entries: [ExifEntry]
 
     var body: some View {
         Text(title)
@@ -171,6 +179,13 @@ struct SectionHeaderView: View {
                     .fill(Color(red: 0.25, green: 0.3, blue: 0.4))
             )
             .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 4, trailing: 0))
+            .contextMenu {
+                Button {
+                    copyToClipboard(formatSection(title: title, entries: entries))
+                } label: {
+                    Label("Copy Section", systemImage: "doc.on.doc")
+                }
+            }
     }
 }
 
@@ -184,30 +199,95 @@ struct ExifEntryRow: View {
     }
 
     var body: some View {
-        if isMultiline {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(entry.key)
-                    .foregroundColor(.primary)
-                    .font(.body.weight(.medium))
-                Text(entry.value)
-                    .foregroundColor(.secondary)
-                    .font(.callout)
-                    .padding(.leading, 12)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
+        Group {
+            if isMultiline {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(entry.key)
+                        .foregroundColor(.primary)
+                        .font(.body.weight(.medium))
+                    Text(entry.value)
+                        .foregroundColor(.secondary)
+                        .font(.callout)
+                        .padding(.leading, 12)
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
+            } else {
+                HStack(alignment: .top) {
+                    Text(entry.key)
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Text(entry.value)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.trailing)
+                }
+                .font(.body)
             }
-            .lineLimit(nil)
-            .fixedSize(horizontal: false, vertical: true)
-        } else {
-            HStack(alignment: .top) {
-                Text(entry.key)
-                    .foregroundColor(.primary)
-                Spacer()
-                Text(entry.value)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.trailing)
+        }
+        .contextMenu {
+            Button {
+                copyToClipboard(entry.value)
+            } label: {
+                Label("Copy Value", systemImage: "doc.on.doc")
             }
-            .font(.body)
+            Button {
+                copyToClipboard("\(entry.key): \(entry.value)")
+            } label: {
+                Label("Copy Field", systemImage: "doc.on.doc.fill")
+            }
         }
     }
+}
+
+/// Button to copy all metadata to clipboard
+struct CopyAllButton: View {
+    let sections: [ExifSectionData]
+    @State private var copied = false
+
+    var body: some View {
+        Button {
+            copyToClipboard(formatAllSections(sections))
+            copied = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                copied = false
+            }
+        } label: {
+            HStack {
+                Spacer()
+                Image(systemName: copied ? "checkmark" : "doc.on.doc")
+                Text(copied ? "Copied!" : "Copy All Metadata")
+                Spacer()
+            }
+            .foregroundColor(copied ? .green : .accentColor)
+        }
+        .buttonStyle(.bordered)
+        .padding(.vertical, 8)
+    }
+}
+
+// MARK: - Clipboard Helpers
+
+/// Copy text to the system clipboard
+private func copyToClipboard(_ text: String) {
+    #if canImport(AppKit)
+    let pasteboard = NSPasteboard.general
+    pasteboard.clearContents()
+    pasteboard.setString(text, forType: .string)
+    #endif
+}
+
+/// Format a single section for clipboard
+private func formatSection(title: String, entries: [ExifEntry]) -> String {
+    var result = "[\(title)]\n"
+    for entry in entries {
+        result += "\(entry.key): \(entry.value)\n"
+    }
+    return result
+}
+
+/// Format all sections for clipboard
+private func formatAllSections(_ sections: [ExifSectionData]) -> String {
+    sections.map { formatSection(title: $0.title, entries: $0.entries) }.joined(separator: "\n")
 }

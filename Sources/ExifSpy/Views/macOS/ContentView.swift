@@ -17,7 +17,7 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             mainContent
-                .frame(minWidth: 600, minHeight: 400)
+                .frame(minWidth: 600, minHeight: 700)
                 .background(Color(NSColor.windowBackgroundColor))
                 .onDrop(of: [UTType.image, UTType.movie, UTType.fileURL], isTargeted: $isTargeted) { providers in
                     handleDrop(providers: providers)

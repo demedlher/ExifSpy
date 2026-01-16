@@ -1,4 +1,4 @@
-# dmd EXIF Viewer
+# ExifSpy
 
 A native macOS application for viewing EXIF metadata and image properties. Simply drag and drop any image or video file to instantly see all embedded metadata.
 
@@ -10,13 +10,15 @@ A native macOS application for viewing EXIF metadata and image properties. Simpl
 - **File statistics** - Shows file name, path, size, dimensions, and aspect ratio
 - **Smart formatting** - GPS coordinates, lens specs, and complex data types are human-readable
 - **"Where was this photo taken?"** - One-click buttons to open GPS coordinates in Apple Maps or Google Maps
+- **Copy to clipboard** - Right-click any field, section, or use "Copy All Metadata" button
 - **Native macOS app** - Full dock presence, proper menu handling, SwiftUI interface
 
-## Screenshot
+## Screenshots
 
-![Metadata View](screenshots/metadata-view.png)
-
-*Split-pane view showing image preview and extracted EXIF metadata with GPS location buttons.*
+| Drop Zone | Metadata View |
+|:---------:|:-------------:|
+| ![Drop Zone](screenshots/dropzone.png) | ![Metadata View](screenshots/metadata-view-and-copy.png) |
+| *Drag and drop any image or video* | *View metadata with right-click copy support* |
 
 ## Requirements
 
@@ -27,18 +29,23 @@ A native macOS application for viewing EXIF metadata and image properties. Simpl
 
 ### Option 1: Download Release
 
-Download the latest `.dmg` from the Releases page, open it, and drag the app to Applications.
+Download the latest `.dmg` from the [Releases](https://github.com/demedlher/ExifSpy/releases) page, open it, and drag the app to Applications.
+
+> **macOS Security Notice**: This app is not signed with an Apple Developer certificate, so macOS will quarantine it by default. If you trust this app, remove the quarantine attribute by running:
+> ```bash
+> xattr -cr /Applications/ExifSpy.app
+> ```
 
 ### Option 2: Build from Source
 
 ```bash
 # Clone the repository
-git clone https://github.com/demedlher/dmd-EXIF-viewer.git
-cd dmd-EXIF-viewer
+git clone https://github.com/demedlher/ExifSpy.git
+cd ExifSpy
 
 # Build and run (debug)
 swift build
-./.build/debug/dmdEXIFviewer
+./.build/debug/ExifSpy
 
 # Or build release DMG
 ./build.sh
@@ -55,6 +62,7 @@ swift build
    - **GPS Data** - Latitude, longitude, altitude (with buttons to view location in Apple Maps or Google Maps)
    - **IPTC Information** - Copyright, captions, keywords
    - **PNG/JFIF Properties** - Format-specific metadata
+4. Right-click any field to copy its value, or use "Copy All Metadata" at the bottom
 
 ## Supported Formats
 
@@ -66,16 +74,18 @@ Any image format supported by macOS ImageIO, including:
 ## Project Structure
 
 ```
-dmd-EXIF-viewer/
+ExifSpy/
 ├── Package.swift              # Swift Package Manager manifest
 ├── build.sh                   # Release build script (creates DMG)
 ├── Sources/
-│   └── dmdEXIFviewer/
-│       ├── dmdEXIFviewerApp.swift  # App entry point and delegate
-│       └── ContentView.swift       # Main UI and metadata logic
+│   └── ExifSpy/
+│       ├── ExifSpyApp.swift       # App entry point and delegate
+│       ├── Models/                # Data models (ExifEntry, ExifSectionData, etc.)
+│       ├── Views/                 # SwiftUI views
+│       └── Services/              # Metadata extraction service
 ├── Resources/
-│   └── Assets.xcassets/       # App icons and assets
-└── dmg_build/                 # DMG packaging template
+│   └── AppIcon.icns           # App icon
+└── screenshots/               # README screenshots
 ```
 
 ## Technical Details
@@ -88,8 +98,8 @@ dmd-EXIF-viewer/
 
 ## License
 
-MIT License - See LICENSE file for details.
+MIT License - See [LICENSE](LICENSE) file for details.
 
 ## Author
 
-Demed
+Demed L'Her ([@demedlher](https://github.com/demedlher))

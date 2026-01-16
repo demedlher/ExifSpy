@@ -7,20 +7,34 @@ struct DropZoneView: View {
     let isTargeted: Bool
 
     private var buildInfo: String {
-        "v2.0"
+        "v2.1"
+    }
+
+    /// Load app icon from bundle or fall back to SF Symbol
+    private var appIconImage: some View {
+        Group {
+            if let iconURL = Bundle.main.url(forResource: "AppIcon", withExtension: "icns"),
+               let nsImage = NSImage(contentsOf: iconURL) {
+                Image(nsImage: nsImage)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                Image(systemName: "photo.on.rectangle.angled")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundColor(.secondary)
+            }
+        }
     }
 
     var body: some View {
         VStack(spacing: 16) {
             Spacer()
 
-            Image(systemName: "photo.on.rectangle.angled")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 80, height: 80)
-                .foregroundColor(.secondary)
+            appIconImage
+                .frame(width: 100, height: 100)
 
-            Text("dmd EXIF Viewer")
+            Text("ExifSpy")
                 .font(.title2)
                 .fontWeight(.medium)
 
