@@ -13,6 +13,12 @@ A native macOS application for viewing EXIF metadata and image properties. Simpl
 - **Copy to clipboard** - Right-click any field, section, or use "Copy All Metadata" button
 - **Native macOS app** - Full dock presence, proper menu handling, SwiftUI interface
 
+## Who is this for?
+
+- **Photographers** who need to check what metadata is embedded in their photos
+- **Divers** who want to extract GPS coordinates from a photo to log a dive site in apps like Subsurface
+- **Hikers** who need to pull location data from a photo to identify a spot in their trail navigation app
+
 ## Screenshots
 
 | Drop Zone | Metadata View |
