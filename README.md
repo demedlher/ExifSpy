@@ -18,6 +18,7 @@ A native macOS application for viewing EXIF metadata and image properties. Simpl
 - **Photographers** who need to check what metadata is embedded in their photos
 - **Divers** who want to extract GPS coordinates from a photo to log a dive site in apps like Subsurface
 - **Hikers** who need to pull location data from a photo to identify a spot in their trail navigation app
+- **Anyone else** who might need to spy into the EXIF info of their photos!
 
 ## Screenshots
 
