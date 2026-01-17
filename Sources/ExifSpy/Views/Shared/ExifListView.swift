@@ -11,6 +11,7 @@ struct ExifListView: View {
     let errorMessage: String?
     let hasFileStats: Bool
     let gpsCoordinates: GPSCoordinates?
+    @Binding var scrollToGPS: Bool
 
     var body: some View {
         Group {
@@ -38,29 +39,44 @@ struct ExifListView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                List {
-                    ForEach(sections) { section in
-                        Section {
-                            ForEach(section.entries) { entry in
-                                ExifEntryRow(entry: entry)
+                ScrollViewReader { proxy in
+                    List {
+                        ForEach(sections) { section in
+                            Section {
+                                ForEach(section.entries) { entry in
+                                    ExifEntryRow(entry: entry)
+                                }
+                                // Show map buttons in GPS Data section
+                                if section.title == "GPS Data", let coords = gpsCoordinates {
+                                    MapButtonsRow(coordinates: coords)
+                                        .id("appleMapsButton")
+                                }
+                            } header: {
+                                SectionHeaderView(title: section.title, entries: section.entries)
                             }
-                            // Show map buttons in GPS Data section
-                            if section.title == "GPS Data", let coords = gpsCoordinates {
-                                MapButtonsRow(coordinates: coords)
+                        }
+
+                        // Copy All Metadata button
+                        if !sections.isEmpty {
+                            Section {
+                                CopyAllButton(sections: sections)
                             }
-                        } header: {
-                            SectionHeaderView(title: section.title, entries: section.entries)
                         }
                     }
-
-                    // Copy All Metadata button
-                    if !sections.isEmpty {
-                        Section {
-                            CopyAllButton(sections: sections)
+                    .listStyle(.plain)
+                    .onChange(of: scrollToGPS) { shouldScroll in
+                        if shouldScroll {
+                            withAnimation {
+                                // Anchor to align Apple Maps button with the arrow in the left pane
+                                proxy.scrollTo("appleMapsButton", anchor: UnitPoint(x: 0.5, y: 0.55))
+                            }
+                            // Reset the trigger
+                            DispatchQueue.main.async {
+                                scrollToGPS = false
+                            }
                         }
                     }
                 }
-                .listStyle(.plain)
             }
         }
     }

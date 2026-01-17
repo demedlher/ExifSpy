@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var isTargeted: Bool = false
     @State private var showZoomOverlay: Bool = false
     @State private var gpsCoordinates: GPSCoordinates? = nil
+    @State private var scrollToGPS: Bool = false
 
     var body: some View {
         ZStack {
@@ -66,12 +67,16 @@ struct ContentView: View {
             ImagePreviewView(
                 image: previewImage,
                 fileStats: fileStats,
+                gpsCoordinates: gpsCoordinates,
                 onImageTap: {
                     if previewImage != nil {
                         withAnimation(.easeInOut(duration: 0.25)) {
                             showZoomOverlay = true
                         }
                     }
+                },
+                onScrollToGPS: {
+                    scrollToGPS = true
                 }
             )
             .frame(minWidth: 200, idealWidth: 280, maxWidth: 400)
@@ -82,7 +87,8 @@ struct ContentView: View {
                 isLoading: isLoading,
                 errorMessage: errorMessage,
                 hasFileStats: fileStats != nil,
-                gpsCoordinates: gpsCoordinates
+                gpsCoordinates: gpsCoordinates,
+                scrollToGPS: $scrollToGPS
             )
             .frame(minWidth: 300)
         }
@@ -99,6 +105,7 @@ struct ContentView: View {
         isLoading = false
         showZoomOverlay = false
         gpsCoordinates = nil
+        scrollToGPS = false
     }
 
     private func handleDrop(providers: [NSItemProvider]) {

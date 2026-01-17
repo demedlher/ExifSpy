@@ -8,7 +8,9 @@ import AppKit
 struct ImagePreviewView: View {
     let image: NSImage?
     let fileStats: FileStats?
+    let gpsCoordinates: GPSCoordinates?
     let onImageTap: () -> Void
+    let onScrollToGPS: () -> Void
 
     var body: some View {
         ScrollView {
@@ -20,9 +22,43 @@ struct ImagePreviewView: View {
                 if let stats = fileStats {
                     fileInfoSection(stats: stats)
                 }
+
+                // GPS location link
+                if fileStats != nil {
+                    gpsLinkSection
+                }
             }
             .padding()
         }
+    }
+
+    @ViewBuilder
+    private var gpsLinkSection: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            if gpsCoordinates != nil {
+                Button(action: onScrollToGPS) {
+                    Text("where was this picture taken? →")
+                        .font(.subheadline)
+                        .foregroundColor(.accentColor)
+                }
+                .buttonStyle(.plain)
+                .onHover { hovering in
+                    if hovering {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
+                    }
+                }
+            } else {
+                Text("where was this picture taken? →")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary.opacity(0.5))
+                Text("(no GPS info available)")
+                    .font(.caption)
+                    .foregroundColor(.secondary.opacity(0.5))
+            }
+        }
+        .padding(.top, 4)
     }
 
     @ViewBuilder
