@@ -2,6 +2,8 @@
 
 ## Under Consideration
 
+- [ ] **Scrub metadata fields** - Allow users to selectively remove/delete specific metadata fields from an image
+- [ ] **Metadata glossary** - Contextual help explaining each field: what it means, who typically uses it, which applications read/write it, example values. Extract specs (EXIF, IPTC, XMP) and rewrite them in plain English
 - [ ] **Show map preview** - Display an embedded map preview within the app when GPS data is present
 - [ ] **Batch processing** - Allow dropping multiple images to view/compare metadata
 - [ ] **Export metadata** - Export metadata to JSON or CSV format
