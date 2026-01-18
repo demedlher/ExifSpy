@@ -3,7 +3,20 @@
 # Exit on error
 set -e
 
-echo "Building ExifSpy v2.1..."
+# Get current version info
+VERSION_FILE="Sources/ExifSpy/AppVersion.swift"
+CURRENT_VERSION=$(grep 'static let version' "$VERSION_FILE" | sed 's/.*"\(.*\)".*/\1/')
+CURRENT_BUILD=$(grep 'static let build' "$VERSION_FILE" | sed 's/[^0-9]*\([0-9]*\).*/\1/')
+GIT_COMMIT=$(git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+
+# Increment build number
+NEW_BUILD=$((CURRENT_BUILD + 1))
+
+# Update AppVersion.swift
+sed -i '' "s/static let build = [0-9]*/static let build = $NEW_BUILD/" "$VERSION_FILE"
+sed -i '' "s/static let commit = \"[^\"]*\"/static let commit = \"$GIT_COMMIT\"/" "$VERSION_FILE"
+
+echo "=== Building ExifSpy v${CURRENT_VERSION}.${NEW_BUILD} (${GIT_COMMIT}) ==="
 
 # Clean previous builds
 rm -rf .build
@@ -40,7 +53,7 @@ cat > ExifSpy.app/Contents/Info.plist << EOF
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.demed.ExifSpy</string>
+    <string>com.dedicated-labs.ExifSpy</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
@@ -48,9 +61,9 @@ cat > ExifSpy.app/Contents/Info.plist << EOF
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>2.1</string>
+    <string>${CURRENT_VERSION}</string>
     <key>CFBundleVersion</key>
-    <string>3</string>
+    <string>${NEW_BUILD}</string>
     <key>LSMinimumSystemVersion</key>
     <string>11.0</string>
     <key>NSHighResolutionCapable</key>

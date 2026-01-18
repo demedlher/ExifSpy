@@ -12,10 +12,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func showAboutPanel() {
-        let year = Calendar.current.component(.year, from: Date())
-
         let creditsText = """
-        © \(year) Demed L'Her
+        © 2025 Demed L'Her – Dedicated-Labs.com
         MIT License
 
         View EXIF metadata from images and videos.
@@ -34,8 +32,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         NSApplication.shared.orderFrontStandardAboutPanel(options: [
             .applicationName: "ExifSpy",
-            .applicationVersion: "2.1",
-            .version: "2.1.0",
+            .applicationVersion: AppVersion.version,
+            .version: AppVersion.versionWithBuild,
             .credits: credits
         ])
     }
